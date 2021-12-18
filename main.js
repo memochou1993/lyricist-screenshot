@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 
 const API_URL = 'https://share.lyricist.ai';
 
-const fetchCard = async (id) => {
+const fetch = async (id) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(`${API_URL}/${id}`);
@@ -25,7 +25,7 @@ const fetchCard = async (id) => {
 };
 
 const requestListener = async (req, res) => {
-  const buffer = await fetchCard('2rV14JxwYd');
+  const buffer = await fetch('2rV14JxwYd');
   res.writeHead(200, {
     'Content-Type': 'image/png',
     'Content-Disposition': 'attachment; filename="image.png"',
