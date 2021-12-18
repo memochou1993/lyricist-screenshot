@@ -11,15 +11,24 @@ const fetch = async (id) => {
   await page.goto(`${API_URL}/${id}`);
   const ele = await page.$('.border-card');
   if (!ele) return null;
-  await page.evaluate(() => (document.querySelector('.button-row').style.display = 'none'));
+  await page.evaluate(() => {
+    document.querySelector('.button-row').style.display = 'none';
+  });
   const card = await ele.boundingBox();
-  const content = await page.screenshot({ clip: { x: card.x, y: card.y, width: card.width, height: card.height } });
+  const content = await page.screenshot({
+    clip: {
+      x: card.x,
+      y: card.y,
+      width: card.width,
+      height: card.height,
+    },
+  });
   await browser.close();
   return content;
 };
 
 const requestListener = async (req, res) => {
-  var { query } = url.parse(req.url, true);
+  const { query } = url.parse(req.url, true);
   const { id } = query;
   const content = await fetch(id);
   if (!content) {
@@ -27,7 +36,7 @@ const requestListener = async (req, res) => {
       'Content-Type': 'application/json',
     });
     res.end(JSON.stringify({
-      'message': 'Not found',
+      message: 'Not found',
     }));
     return;
   }
