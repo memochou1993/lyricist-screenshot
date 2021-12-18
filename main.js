@@ -6,7 +6,7 @@ const API_URL = 'https://share.lyricist.ai';
 
 const fetch = async (id) => {
   if (!id) return null;
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
   const page = await browser.newPage();
   await page.goto(`${API_URL}/${id}`);
   const ele = await page.$('.border-card');
