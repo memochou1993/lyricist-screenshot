@@ -1,36 +1,41 @@
 const http = require('http');
+const url = require('url');
 const puppeteer = require('puppeteer');
 
 const API_URL = 'https://share.lyricist.ai';
 
 const fetch = async (id) => {
+  if (!id) return null;
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(`${API_URL}/${id}`);
-  await page.evaluate(() => {
-    document.querySelector('.button-row').style.display = 'none';
-  });
   const ele = await page.$('.border-card');
+  if (!ele) return null;
+  await page.evaluate(() => (document.querySelector('.button-row').style.display = 'none'));
   const card = await ele.boundingBox();
-  const buffer = await page.screenshot({
-    clip: {
-      x: card.x,
-      y: card.y,
-      width: card.width,
-      height: card.height,
-    },
-  });
+  const content = await page.screenshot({ clip: { x: card.x, y: card.y, width: card.width, height: card.height } });
   await browser.close();
-  return buffer;
+  return content;
 };
 
 const requestListener = async (req, res) => {
-  const buffer = await fetch('2rV14JxwYd');
+  var { query } = url.parse(req.url, true);
+  const { id } = query;
+  const content = await fetch(id);
+  if (!content) {
+    res.writeHead(404, {
+      'Content-Type': 'application/json',
+    });
+    res.end(JSON.stringify({
+      'message': 'Not found',
+    }));
+    return;
+  }
   res.writeHead(200, {
     'Content-Type': 'image/png',
-    'Content-Disposition': 'attachment; filename="image.png"',
+    'Content-Disposition': `attachment; filename="${id}.png"`,
   });
-  res.end(buffer);
+  res.end(content);
 };
 
 http.createServer(requestListener).listen(80);
