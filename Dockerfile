@@ -17,4 +17,4 @@ COPY . .
 
 RUN npm i
 
-CMD [ "node", "main.js" ]
+CMD [ "node", "index.js" ]
