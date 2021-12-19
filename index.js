@@ -47,4 +47,4 @@ const requestListener = async (req, res) => {
   res.end(content);
 };
 
-http.createServer(requestListener).listen(80);
+http.createServer(requestListener).listen(process.env.PORT || 80);
