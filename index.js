@@ -9,10 +9,10 @@ const fetch = async (id) => {
   const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
   const page = await browser.newPage();
   await page.goto(`${API_URL}/${id}`);
-  const ele = await page.$('.border-card');
+  const ele = await page.$('.styled-background-card');
   if (!ele) return null;
   await page.evaluate(() => {
-    document.querySelector('.button-row').style.display = 'none';
+    document.querySelector('.toolbar').style.display = 'none';
   });
   const card = await ele.boundingBox();
   const content = await page.screenshot({
